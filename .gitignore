@@ -47,7 +47,6 @@ __pycache__
 
 **/*.class
 **/*.jar
-**/out
 **/venv
 **/*.log
 **/*.gz
