@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: user-auth-n
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: user01
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 1
+      #idle-timeout: 60000
+      connection-timeout: 600000
+      maximum-pool-size: 3
+      pool-name: user-hikari-cp
+
+  jpa:
+    generate-ddl: false
+    show-sql: true
+    properties:
+      hibernate:
+        '[format_sql]': true
+
+  security:
+    # user and password when login form is enabled
+    user:
+      name: user
+      password: 1234
+
+server:
+  servlet:
+    session:
+      cookie:
+        same-site: strict
+
+jwt:
+  algorithm: HmacSHA256
+  key-size: 2048
+        
+logging:
+  level:
+    '[com.zaxxer.hikari]': DEBUG
+    org:
+      springframework:
+        security: DEBUG
+      hibernate:
+        sql: DEBUG
+        type:
+          descriptor:
+            sql: DEBUG
+  file:
+    name: logs/user_authn.log

@@ -1,0 +1,8 @@
+drop table data01.user_tb;
+
+create table data01.user_tb (
+    id bigserial primary key,
+    username  varchar(255) unique NOT NULL,
+    passwd varchar(255) NOT NULL,
+    email varchar(255) NOT NULL
+);

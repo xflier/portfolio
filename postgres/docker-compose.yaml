@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:17.4-alpine3.21
+    container_name: postgres
+    user: '$UID:$GID'
+    restart: no
+    env_file: 
+      - .env
+    #environment:
+      #- POSTGRES_USER=user
+      #- POSTGRES_PASSWORD=1111
+      #- POSTGRES_DB=default
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./.data:/var/lib/postgresql/data
+    networks: 
+      - docker_net
+networks:
+  docker_net:
+    external: true
