@@ -13,11 +13,18 @@ public class UserAroundAspect {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(UserAroundAspect.class);
 
-    @Around("execution(* home.xflier.authn.service.UserService.partialSearch(..)) ||" +
-            "execution(* home.xflier.authn.service.UserService.findById(..)) ||" +
-            "execution(* home.xflier.authn.service.UserService.getUserPrincipal(..)) ||" +
-            "execution(* home.xflier.authn.service.UserService.add(..))")
-    public Object userAroundDao(ProceedingJoinPoint joinPoint) throws Throwable {
+    // @Around("execution(* home.xflier.authn.service.UserService.partialSearch(..)) ||" +
+    //         "execution(* home.xflier.authn.service.UserService.findById(..)) ||" +
+    //         "execution(* home.xflier.authn.service.UserService.getUserPrincipal(..)) ||" +
+    //         "execution(* home.xflier.authn.service.UserService.add(..))")
+    @Around("execution(public * home.xflier.authn.service.*.find*(..)) || " +
+            "execution(public * home.xflier.authn.service.*.get*(..)) || " +
+            "execution(public * home.xflier.authn.service.*.add*(..)) || " +
+            "execution(public * home.xflier.authn.service.*.save*(..)) || " +
+            "execution(public * home.xflier.authn.service.*.*Search(..)) || " +
+            "execution(public * home.xflier.authn.service.*.search*(..)) || " +
+            "execution(public * home.xflier.authn.service.*.delete*(..)) " )
+    public Object userAroundService(ProceedingJoinPoint joinPoint) throws Throwable {
         // before the method, first log a message
         Object[] args = joinPoint.getArgs();
         String argString = "";

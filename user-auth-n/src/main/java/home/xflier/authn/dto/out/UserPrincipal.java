@@ -1,10 +1,7 @@
 package home.xflier.authn.dto.out;
 
 import java.util.Collection;
-import java.util.Collections;
-
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.Data;
@@ -17,10 +14,12 @@ public class UserPrincipal implements UserDetails{
     private String username;
     private String passwd;
     private String email;
+    private Collection<? extends GrantedAuthority> authorities;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority("USER"));
+        // return Collections.singleton(new SimpleGrantedAuthority("USER"));
+        return authorities;
     }
     
     @Override

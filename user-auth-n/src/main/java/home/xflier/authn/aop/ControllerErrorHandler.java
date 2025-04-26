@@ -4,8 +4,10 @@ import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -29,6 +31,10 @@ public class ControllerErrorHandler {
             httpStatus = HttpStatus.BAD_REQUEST;
         } else if (ex instanceof NoSuchElementException) {
             httpStatus = HttpStatus.NOT_FOUND;
+        } else if (ex instanceof DataIntegrityViolationException) {
+            httpStatus = HttpStatus.CONFLICT;
+        } else if (ex instanceof AuthorizationDeniedException) {
+            httpStatus = HttpStatus.FORBIDDEN;
         } else {
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         }

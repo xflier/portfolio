@@ -5,16 +5,21 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import home.xflier.authn.dto.out.UserPrincipal;
@@ -24,13 +29,12 @@ import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 
 @Service
 public class JwtService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
-
-    private UserService userService;
 
     @Value("${jwt.algorithm}")
     private String jwtAlgorithm;
@@ -41,7 +45,8 @@ public class JwtService {
     private String secretKey;
     private KeyPair keyPair;
 
-    private void init() {
+    @PostConstruct
+    public void init() {
         String alg = jwtAlgorithm;
         int keySize = Integer.parseInt(jwtKeySize);
         LOGGER.info("algorithm : " + alg);
@@ -75,9 +80,15 @@ public class JwtService {
     public String generateToken(String userName) {
 
         // define the claim / payload
-        Map<String, String> claims = new HashMap<>();
+        Map<String, Object> claims = new HashMap<>();
 
         JwtBuilder builder = Jwts.builder();
+
+        UserPrincipal user = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LOGGER.info("Generating JWT Token for user login = " + user.toString());
+
+        claims.put("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+
         builder.claims(claims)
                 .subject(userName)
                 .issuedAt(new Date(System.currentTimeMillis()))
@@ -96,14 +107,23 @@ public class JwtService {
 
     public UserPrincipal validateToken(String token) {
         String user = null;
+        Claims claims = null;
         try {
-            Claims claims = extractAllClaims(token);
+            claims = extractAllClaims(token);
             user = claims.getSubject();
         } catch (Exception e) {
             LOGGER.error("Token verification failed : " + e.getMessage());
         }
         
-        return userService.getUserPrincipal(user);
+        UserPrincipal userPrincipal = new UserPrincipal();
+        userPrincipal.setUsername(user);
+        Collection<? extends GrantedAuthority> authorities = ((List<?>)claims.get("roles")).stream()
+                .map(role -> new SimpleGrantedAuthority(role.toString()))
+                .collect(Collectors.toList())  ;
+        userPrincipal.setAuthorities(authorities);
+
+        LOGGER.info("UserPrincipal = " + userPrincipal.toString());
+        return userPrincipal;
     }
 
     private SecretKey getKey() {
@@ -149,10 +169,10 @@ public class JwtService {
             return null;
     }
 
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-        init();
-    }
+    // @Autowired
+    // public void setUserService(UserService userService) {
+    //     this.userService = userService;
+    //     init();
+    // }
 
 }

@@ -1,14 +1,17 @@
 spring:
+  jackson:
+    default-property-inclusion: NON_NULL
   application:
     name: user-auth-n
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=data01
     username: user01
     password: 123456
     driver-class-name: org.postgresql.Driver
     hikari:
+      leak-detection-threshold: 600000
       minimum-idle: 1
-      #idle-timeout: 60000
+      idle-timeout: 1200000
       connection-timeout: 600000
       maximum-pool-size: 3
       pool-name: user-hikari-cp

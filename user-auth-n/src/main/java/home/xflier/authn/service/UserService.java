@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import home.xflier.authn.dto.in.UserInDto;
 import home.xflier.authn.dto.out.UserOutDto;
@@ -22,6 +23,7 @@ import home.xflier.authn.mapper.UserMapper;
 import home.xflier.authn.repo.UserRepo;
 
 @Service
+@Transactional
 public class UserService implements UserDetailsService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
@@ -38,28 +40,29 @@ public class UserService implements UserDetailsService {
 
     public UserOutDto add(UserInDto user) {
         LOGGER.info("adding a user ... " + user.getUsername());
-        UserEntity newUser = mapper.toEntity(user);
+        UserEntity newUser = mapper.toUserEntity(user);
         newUser.setPasswd(bcryptEncoder.encode(user.getPasswd()));
         UserEntity userAdded = repo.save(newUser);
-        return mapper.toDto(userAdded);
+        return mapper.toUserDto(userAdded);
     }
 
     public UserOutDto findById(long id) {
         LOGGER.info("finding a user by an id ... " + id);
         UserEntity user = repo.findById(id).orElseThrow();
-        return mapper.toDto(user);
+        return mapper.toUserDto(user);
     }
 
     public UserPrincipal getUserPrincipal(String name) {
         LOGGER.info("retrieving a user principal by a name ... " + name);
-        UserEntity user = repo.findByUsername(name).orElseThrow();
-        return mapper.toPrincipal(user);
+        // UserEntity user = repo.findByUsername(name).orElseThrow();
+        UserEntity user = repo.findWithRoleByUsername(name).orElseThrow();
+        return mapper.toUserPrincipal(user);
     }
 
     public Page<UserOutDto> partialSearch(String partialValue, int offset, int limit) {
         Pageable pageable = PageRequest.of((int) (offset / limit), limit);
         Page<UserEntity> users = repo.partialSearch(partialValue, pageable);
-        return users.map(mapper::toDto);
+        return users.map(mapper::toUserDto);
     }
 
     @Override

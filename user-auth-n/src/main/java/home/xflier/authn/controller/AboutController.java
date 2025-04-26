@@ -9,6 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +30,7 @@ public class AboutController {
     private ApplicationContext context;
 
     @GetMapping("about")
+    @PreAuthorize("hasRole('GUEST')")
     public ResponseEntity<String> about(HttpServletRequest req) {
 
         Enumeration<String> headers = req.getHeaderNames();
@@ -70,7 +72,8 @@ public class AboutController {
     }
 
     @GetMapping("shutdown")
-    public ResponseEntity<String> error(HttpServletRequest req) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> shutdown(HttpServletRequest req) {
         LOGGER.info("Got a request /shutdown -GET, exit now ...");
         Thread thread = new Thread(() -> {
             try {
