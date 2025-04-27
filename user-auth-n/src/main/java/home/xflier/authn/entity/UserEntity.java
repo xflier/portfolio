@@ -16,7 +16,9 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 /**
- * A simple User Entity with minimal information, corresponding to databale table structure
+ * @author xflier
+ * @version 1.0
+ * @since 2023-10-01
  */
 
 @Tag(name = "User Entity", description = "A simple User Entity with minimal information, corresponding to databale table structure")

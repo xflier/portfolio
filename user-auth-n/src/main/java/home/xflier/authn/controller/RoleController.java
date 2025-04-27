@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import home.xflier.authn.dto.in.RoleInDto;
 import home.xflier.authn.dto.out.RoleOutDto;
 import home.xflier.authn.dto.out.UserPrincipal;
-import home.xflier.authn.entity.RoleEntity;
-import home.xflier.authn.mapper.UserMapper;
 import home.xflier.authn.service.RoleService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,7 +26,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-
+/**
+ * RoleController
+ *
+ * @author xflier
+ * @version 1.0
+ * @since 2023-10-01
+ */
 @RestController
 @Validated
 @RequestMapping("/role")
@@ -37,21 +41,31 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class RoleController {
 
     @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
     private RoleService roleService;
 
-    @PostMapping("/add")
+    /**
+     * Add a new role
+     *
+     * @param req
+     * @param role
+     * @return
+     */
+    @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RoleOutDto> add(HttpServletRequest req, @Valid @RequestBody RoleInDto role) {
 
-        RoleEntity roleIn = userMapper.toRoleEntity(role);
-        RoleOutDto roleOut = roleService.addRole(roleIn);
+        RoleOutDto roleOut = roleService.addRole(role);
 
         return new ResponseEntity<>(roleOut, HttpStatus.CREATED);
     }
 
+    /**
+     * Retrieve all roles
+     *
+     * @param req
+     * @param role
+     * @return
+     */
     @GetMapping("/all")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<RoleOutDto>> findAll(@AuthenticationPrincipal UserPrincipal currentUser) {
@@ -61,10 +75,16 @@ public class RoleController {
                 .map(authority -> authority.getAuthority())
                 .toList());
         
-        List<RoleEntity> roles = roleService.findAll();
-        return new ResponseEntity<>(userMapper.toRoleDtoList(roles), HttpStatus.OK);
+        List<RoleOutDto> roles = roleService.findAll();
+        return new ResponseEntity<>(roles, HttpStatus.OK);
     }
 
+    /**
+     * Delete a role by ID
+     *
+     * @param id
+     * @return
+     */
     @DeleteMapping("/id/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteById(@PathVariable(name = "id", required = true) int id) {
@@ -73,12 +93,18 @@ public class RoleController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    /**
+     * Retrieve a role by ID
+     *
+     * @param id
+     * @return
+     */
     @GetMapping("/id/{id}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<RoleOutDto> findById(@PathVariable(name = "id", required = true) int id) {
 
-        RoleEntity role = roleService.findById(id);
-        return new ResponseEntity<>(userMapper.toRoleDto(role), HttpStatus.OK);
+        RoleOutDto role = roleService.findById(id);
+        return new ResponseEntity<>(role, HttpStatus.OK);
     }
     
 }

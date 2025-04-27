@@ -14,11 +14,25 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import home.xflier.authn.dto.out.ErrorDto;
 import jakarta.servlet.http.HttpServletRequest;
 
+/**
+ * Handles exceptions thrown by controllers.
+ * 
+ * @author xflier 
+ * @version 1.0
+ * @since 2023-10-01
+ */
 @ControllerAdvice
 public class ControllerErrorHandler {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ControllerErrorHandler.class);
 
+    /**
+     * Handles exceptions thrown by controllers.
+     * 
+     * @param ex the exception
+     * @param req the request
+     * @return the response entity
+     */
     @ExceptionHandler
     public ResponseEntity<ErrorDto> handleExceptions(Exception ex, HttpServletRequest req) {
 

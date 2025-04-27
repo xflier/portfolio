@@ -13,6 +13,12 @@ import home.xflier.authn.entity.UserEntity;
 import home.xflier.authn.repo.RoleRepo;
 import home.xflier.authn.repo.UserRepo;
 
+/**
+ * @author xflier
+ * @version 1.0
+ * @since 2023-10-01
+ */
+
 @Mapper(componentModel = "spring")
 public class RoleAssignmentMapper {
 

@@ -4,6 +4,17 @@ import home.xflier.authn.dto.RoleAssignmentInValidation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+/**
+ * DTO for role assignment input.
+ * This class is used to transfer data related to role assignments.
+ * It includes fields for user ID, role ID, role name, and username.
+ * The class is annotated with Lombok's @Data for automatic generation of getters, setters, and other utility methods.
+ * It also includes validation annotations to ensure the integrity of the data.
+ *
+ * @author xflier
+ * @version 1.0
+ * @since 2023-10-01
+ */
 @Data
 @RoleAssignmentInValidation
 public class RoleAssignmentInDto {

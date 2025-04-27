@@ -1,0 +1,41 @@
+<config 
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xmlns='http://www.ehcache.org/v3'
+    xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core.xsd">
+
+    <cache-template name="name1"> 
+        <key-type>java.lang.Integer</key-type>
+        <value-type>home.xflier.authn.dto.out.RoleOutDto</value-type>
+        <expiry>
+            <ttl unit="minutes">10</ttl> <!-- 10 minutes TTL -->
+        </expiry>
+        <resources>
+            <heap unit="entries">10</heap> <!-- Maximum 10 entries -->
+        </resources>
+    </cache-template>
+
+    <cache alias="roleCacheById" uses-template="name1">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>home.xflier.authn.dto.out.RoleOutDto</value-type>
+    </cache>
+
+    <cache alias="roleAssignment" uses-template="name1">
+        <key-type>java.lang.Long</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+
+    <cache alias="userPrincipal" uses-template="name1">
+        <key-type>java.lang.String</key-type>
+        <value-type>home.xflier.authn.dto.out.UserPrincipal</value-type>
+    </cache>
+
+    <cache alias="loadUserByUsername" uses-template="name1">
+        <key-type>java.lang.String</key-type>
+        <value-type>org.springframework.security.core.userdetails.UserDetails</value-type>
+    </cache>
+
+    <cache alias="userFindById" uses-template="name1">
+        <key-type>java.lang.Long</key-type>
+        <value-type>home.xflier.authn.dto.out.UserOutDto</value-type>
+    </cache>
+</config>

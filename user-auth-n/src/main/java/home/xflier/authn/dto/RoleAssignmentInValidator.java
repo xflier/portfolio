@@ -4,6 +4,13 @@ import home.xflier.authn.dto.in.RoleAssignmentInDto;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
+/**
+ *  RoleAssignmentInValidator is a custom validator for validating role assignment input.
+ * 
+ * @author xflier
+ * @version 1.0
+ * @date 2023/10/16
+ */
 public class RoleAssignmentInValidator implements ConstraintValidator<RoleAssignmentInValidation, RoleAssignmentInDto> {
 
     @Override

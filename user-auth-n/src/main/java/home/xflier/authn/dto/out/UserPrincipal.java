@@ -7,6 +7,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * UserPrincipal is a Data Transfer Object (DTO) that represents the principal user in the authentication system.
+ * It implements UserDetails interface from Spring Security.
+ * 
+ * @author xflier
+ * @version 1.0
+ * @since 2023-10-01
+ */
 @Data
 @NoArgsConstructor
 public class UserPrincipal implements UserDetails{

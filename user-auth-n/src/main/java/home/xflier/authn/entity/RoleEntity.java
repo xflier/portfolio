@@ -8,6 +8,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+/**
+ * RoleEntity.java
+ * 
+ * This class represents a role entity in the system.
+ * It is used to differentiate between regular users with view rights and admin roles with management rights.
+ * 
+ * @author xflier
+ * @version 1.0
+ * @since 2023-10-01
+ */
 @Tag(name = "User Role Entity", description = "A simple role implementation to differentiate regular user with view right, and admin role with management")
 @Entity
 @Table(name = "role_tb")

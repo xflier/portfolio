@@ -6,8 +6,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import home.xflier.authn.dto.in.RoleAssignmentInDto;
 import home.xflier.authn.dto.out.RoleAssignmentOutDto;
-import home.xflier.authn.entity.RoleAssignmentEntity;
-import home.xflier.authn.mapper.UserMapper;
 import home.xflier.authn.service.RoleAssignmentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +26,14 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+/**
+ * RoleAssignmentController
+ *
+ * @author xflier
+ * @version 1.0
+ * @since 2023-10-01
+ */
+
 @RestController
 @RequestMapping("/role-assignments")
 @Validated
@@ -35,26 +41,35 @@ import org.springframework.web.bind.annotation.PathVariable;
 @Tag(name = "Role Assignment APIs", description = "Operations related to role assignments, such as add, query, etc.")
 @Transactional
 public class RoleAssignmentController {
-    @Autowired
-    private UserMapper userMapper;
 
     @Autowired
     private RoleAssignmentService roleAssignmentService;
 
-    @PostMapping("add")
+    /**
+     * Add a role assignment
+     *
+     * @param roleAssignment
+     * @return
+     */
+    @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RoleAssignmentOutDto> add(HttpServletRequest req,
             @Valid @RequestBody RoleAssignmentInDto roleAssignment) {
 
         log.info("Processing request - /role-assignments/add - POST");
-        RoleAssignmentEntity entity = userMapper.toRoleAssignmentEntity(roleAssignment);
 
-        RoleAssignmentEntity roleAssignmentEntity = roleAssignmentService.save(entity);
+        RoleAssignmentOutDto roleAssignmentDto = roleAssignmentService.save(roleAssignment);
 
-        return new ResponseEntity<>(userMapper.toRoleAssignmentDto(roleAssignmentEntity), HttpStatus.CREATED);
+        return new ResponseEntity<>(roleAssignmentDto, HttpStatus.CREATED);
 
     }
 
+    /**
+     * Find role assignments by user id
+     *
+     * @param id
+     * @return
+     */
     @GetMapping("user/id/{userId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<RoleAssignmentOutDto>> findByUserId(@PathVariable(name = "userId", required = true) long id) {
@@ -66,7 +81,14 @@ public class RoleAssignmentController {
         return new ResponseEntity<>(roleAssignments, HttpStatus.OK);
     }
 
-    @DeleteMapping
+    /**
+     * Delete role assignments by user id and role id
+     *
+     * @param userId
+     * @param roleId
+     * @return
+     */
+    @DeleteMapping("/user")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteByUserId(@RequestParam("userId") long userId,
             @RequestParam ("roleId") int roleId ) {

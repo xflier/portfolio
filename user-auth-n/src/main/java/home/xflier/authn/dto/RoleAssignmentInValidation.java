@@ -9,6 +9,15 @@ import java.lang.annotation.Target;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
+/**
+ * Custom validation annotation for role assignment input.
+ * Validates that the role name is one of the allowed values.
+ * 
+ * @author xflier
+ * @version 1.0
+ * @since 2023-10-01
+ */
+
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})

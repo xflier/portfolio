@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import home.xflier.authn.dto.LoginDto;
 import home.xflier.authn.dto.in.UserInDto;
 import home.xflier.authn.dto.out.UserOutDto;
 import home.xflier.authn.service.JwtService;
@@ -30,6 +31,20 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+/**
+ * This controller handles user-related operations such as adding a new user,
+ * retrieving user details, searching for users, and user login.
+ * <p>
+ * It provides endpoints for creating a new user, retrieving user information
+ * by ID, searching for users with a partial username, and logging in with
+ * username and password to obtain a JWT token.
+ * </p>
+ *
+ * @author xflier
+ * @version 1.0
+ * @since 2023-10-01
+ */
+
 @RestController
 @Validated
 @RequestMapping(value = "/user/", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
@@ -47,8 +62,14 @@ public class UserController {
     @Autowired
     private JwtService jwtService;
 
+    /**
+     * add a new user
+     * @param req
+     * @param user
+     * @return
+     */
     @Operation(summary = "create a new user", description = "add a new user into database")
-    @PostMapping(value = "add", consumes = { MediaType.APPLICATION_JSON_VALUE,
+    @PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE,
             MediaType.APPLICATION_XML_VALUE })
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserOutDto> add(HttpServletRequest req, @RequestBody @Valid UserInDto user) {
@@ -58,6 +79,12 @@ public class UserController {
         return new ResponseEntity<>(userDto, HttpStatus.CREATED);
     }
 
+    /**
+     * Retrieve a user
+     * @param req
+     * @param user
+     * @return
+     */
     @Operation(summary = "query a user by an id", description = "return the user details except password")
     @GetMapping("id/{userId}")
     @PreAuthorize("hasRole('USER')")
@@ -66,20 +93,34 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    /**
+     * Search users with a partial value on username
+     * @param partialValue
+     * @param req
+     * @param offset
+     * @param limit
+     * @return
+     */
     @Operation(summary = "search a user with a partial value on username", description = "Paginated Response")
-    @GetMapping("search/{partialValue}")
+    @GetMapping("partial-username/{partialValue}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<Page<UserOutDto>> partialSearch(HttpServletRequest req,
-            @PathVariable("partialValue") String p,
+            @PathVariable(value = "partialValue", required = true) String p,
             @RequestParam(defaultValue = "0", required = false) @Qualifier("offset") int offset,
             @RequestParam(defaultValue = "2", required = false) @Qualifier("limit") int limit) {
         return new ResponseEntity<>(userService.partialSearch(p, offset, limit), HttpStatus.OK);
     }
 
+    /**
+     * Login with username and password and get a JWT token in the header
+     * @param req
+     * @param user
+     * @return
+     */
     @Operation(summary = "login with username/password, and get a JWT token in the header", description = "User JWT Token for future requests")
-    @PostMapping("login")
+    @PostMapping("token")
     public ResponseEntity<Void> login(HttpServletRequest req, HttpServletResponse res,
-            @RequestBody UserInDto user) {
+            @RequestBody LoginDto user) {
 
         boolean isAuthenticated = userService.authenticate(user, this.authManager);
 

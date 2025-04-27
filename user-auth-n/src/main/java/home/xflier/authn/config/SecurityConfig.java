@@ -20,6 +20,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import home.xflier.authn.service.UserService;
 
+/**
+ * Security Configuration
+ * 
+ * @author xflier
+ * @version 1.0 
+ * @since 2023-10-01
+ */
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -33,6 +41,9 @@ public class SecurityConfig {
         this.userService = userService;
     }
 
+    /**
+     * Security Filter Chain 
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -52,7 +63,7 @@ public class SecurityConfig {
         http.csrf(customizer -> customizer.disable())
 
         // allow login without JWT or username/passwd authentication
-        .authorizeHttpRequests(auth -> auth.requestMatchers("/user/login").permitAll().anyRequest().authenticated())
+        .authorizeHttpRequests(auth -> auth.requestMatchers("/user/token").permitAll().anyRequest().authenticated())
         // .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
 
         /* non lambda way to disable session, and make it stateless */

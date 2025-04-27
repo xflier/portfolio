@@ -19,6 +19,17 @@ import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.GetMapping;
 
+/**
+ * Controller for handling requests related to the "About" page and application shutdown.
+ * <p>
+ * This controller provides endpoints for displaying information about the application and
+ * shutting down the application gracefully.
+ * </p>
+ *
+ * @author xflier
+ * @version 1.0
+ * @since 2023-10-01
+ */
 
 @RestController
 @RequestMapping("/")
@@ -29,6 +40,15 @@ public class AboutController {
     @Autowired
     private ApplicationContext context;
 
+    /**
+     * Handles GET requests to the "about" endpoint.
+     * <p>
+     * This method retrieves and logs request headers, session attributes, and CSRF token information.
+     * </p>
+     *
+     * @param req the HttpServletRequest object containing request information
+     * @return a ResponseEntity containing the result of the operation
+     */
     @GetMapping("about")
     @PreAuthorize("hasRole('GUEST')")
     public ResponseEntity<String> about(HttpServletRequest req) {
@@ -71,6 +91,15 @@ public class AboutController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    /**
+     * Handles GET requests to the "shutdown" endpoint.
+     * <p>
+     * This method initiates a graceful shutdown of the application.
+     * </p>
+     *
+     * @param req the HttpServletRequest object containing request information
+     * @return a ResponseEntity indicating the shutdown status
+     */
     @GetMapping("shutdown")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> shutdown(HttpServletRequest req) {
@@ -88,6 +117,14 @@ public class AboutController {
         return new ResponseEntity<>("<p>Shutting down ...</p>", HttpStatus.OK);
     }
 
+    /**
+     * Handles GET requests to the "hello" endpoint.
+     * <p>
+     * This method returns a simple "Hello World" message.
+     * </p>
+     *
+     * @return a ResponseEntity containing the "Hello World" message
+     */
     @GetMapping("hello")
     public ResponseEntity<String> hello() {
         return new ResponseEntity<>("<p>Hello World</p>", HttpStatus.OK);

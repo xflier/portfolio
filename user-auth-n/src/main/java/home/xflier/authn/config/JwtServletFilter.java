@@ -17,12 +17,32 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This filter is used to validate the JWT token in the request header.
+ * If the token is valid, it sets the authentication in the security context.
+ * It is executed once per request.
+ *
+ * @author xflier
+ * @version 1.0
+ * @since 2023-10-01
+ */
+
 @Component
 @Slf4j
 public class JwtServletFilter extends OncePerRequestFilter {
 
     private JwtService jwtService;
 
+    /**
+     * This method is called once per request.
+     * It reads the JWT token from the request header, validates it,
+     * and sets the authentication in the security context.
+     * @param request the HttpServletRequest
+     * @param response the HttpServletResponse
+     * @param filterChain the FilterChain
+     * @throws ServletException if an error occurs during the filter chain
+     * @throws IOException if an error occurs during the filter chain
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -53,6 +73,10 @@ public class JwtServletFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * This method is used to set the JwtService.  It is called by Spring
+     * @param jwtService
+     */
     @Autowired
     public void setJwtService(JwtService jwtService) {
         this.jwtService = jwtService;

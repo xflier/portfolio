@@ -1,22 +1,12 @@
-package home.xflier.authn.dto.in;
+package home.xflier.authn.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-/**
- * UserInDto is a Data Transfer Object (DTO) that represents the input data for a user.
- * It contains fields for user ID, username, password, and email.
- * 
- * @author xflier
- * @version 1.0
- * @date 2023/10/27
- */
 @Data
-public class UserInDto {
-    private long id;
+public class LoginDto {
 
     @Schema(description = "username must be at least 4 chars")
     @NotBlank(message = "Username can't be blank!")
@@ -28,8 +18,4 @@ public class UserInDto {
     @Size(min = 4, max = 255, message = "password length should be between 4 and 255!")
     private String passwd;
 
-    @Schema(description = "valid email")
-    @NotBlank(message = "Email can't be blank!")
-    @Email(message = "Invalid Email address !")
-    private String email;
 }

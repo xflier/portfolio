@@ -31,6 +31,14 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 
+/**
+ * JwtService
+ * 
+ * @author xflier
+ * @version 1.0
+ * @since 2023-10-01
+ */
+
 @Service
 public class JwtService {
 
@@ -84,7 +92,18 @@ public class JwtService {
 
         JwtBuilder builder = Jwts.builder();
 
-        UserPrincipal user = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LOGGER.info("retrieving user principal ...");
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserPrincipal user = null;
+        if (principal instanceof UserPrincipal) {
+            user = (UserPrincipal) principal;
+            LOGGER.info("user principal = " + user.toString());
+        } else {
+            LOGGER.info("principal is not a UserPrincipal : " + principal.getClass());
+            throw new RuntimeException("principal is not a UserPrincipal");
+        }
+
         LOGGER.info("Generating JWT Token for user login = " + user.toString());
 
         claims.put("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));

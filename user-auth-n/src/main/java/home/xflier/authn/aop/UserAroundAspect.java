@@ -7,12 +7,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+/**
+ * Aspect for logging execution of service methods.
+ *
+ * @author xflier
+ * @version 1.0
+ * @since 2023-10-01
+ */
 @Aspect
 @Component
 public class UserAroundAspect {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(UserAroundAspect.class);
 
+    /**
+     * Log the execution of service methods.
+     * <p> 
+     * @param joinPoint
+     * @return
+     * @throws Throwable
+     */
     // @Around("execution(* home.xflier.authn.service.UserService.partialSearch(..)) ||" +
     //         "execution(* home.xflier.authn.service.UserService.findById(..)) ||" +
     //         "execution(* home.xflier.authn.service.UserService.getUserPrincipal(..)) ||" +

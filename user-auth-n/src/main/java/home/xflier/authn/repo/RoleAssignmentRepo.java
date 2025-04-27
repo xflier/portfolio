@@ -6,6 +6,15 @@ import org.springframework.stereotype.Repository;
 import home.xflier.authn.entity.RoleAssignmentEntity;
 import java.util.List;
 
+/**
+ * RoleAssignmentRepo is a repository interface for managing role assignments.
+ * It extends CrudRepository to provide basic CRUD operations for RoleAssignmentEntity.
+ * Additional query methods can be defined as needed.
+ *
+ * @author xflier
+ * @version 1.0
+ * @since 2023-10-01
+ */
 @Repository
 public interface RoleAssignmentRepo extends CrudRepository<RoleAssignmentEntity, Long> {
     // Additional query methods can be defined here if needed

@@ -20,6 +20,13 @@ import home.xflier.authn.entity.RoleAssignmentEntity;
 import home.xflier.authn.entity.RoleEntity;
 import home.xflier.authn.entity.UserEntity;
 
+/**
+ * UserMapper
+ * 
+ * @author xflier
+ * @version 1.0
+ * @since 2023-10-01
+ */
 @Mapper(componentModel = "spring", uses = RoleAssignmentMapper.class)
 public interface UserMapper{
 

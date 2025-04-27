@@ -12,6 +12,15 @@ import org.springframework.data.repository.query.Param;
 
 import home.xflier.authn.entity.UserEntity;
 
+/**
+ * User repository interface for managing user entities.
+ * Provides methods to find users by username and perform partial searches.
+ * Also includes a method to fetch user entities with their associated roles.
+ 
+ * @author xflier
+ * @version 1.0
+ * @since 2023-10-01
+ */
 public interface UserRepo extends JpaRepository<UserEntity, Long>{
 
     public Optional<UserEntity> findByUsername(String username);

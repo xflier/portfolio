@@ -12,6 +12,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+/**
+ * RoleAssignmentEntity
+ * 
+ * @author xflier
+ * @version 1.0
+ * @since 2023-10-01
+ */
 @Tag(name = "User Role Assignement Entity", description = "A simple implementation to assign roles to users")
 @Entity
 @Table(name = "user2role_tb")

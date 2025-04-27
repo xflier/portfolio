@@ -2,6 +2,7 @@ package home.xflier.authn;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 
 /**
  * A simple user authentication application :
@@ -12,8 +13,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *  4. login with user/passwd authentication
  * 	5. REST APIs in xml or json formats (STATELESS)
  *  6. Disabled CSRF token
+ * 
+ * @author xflier
+ * @version 1.0
+ * @since 2023-10-01
  */
+
 @SpringBootApplication
+@EnableCaching
 public class UserAuthNApplication {
 
 	public static void main(String[] args) {
