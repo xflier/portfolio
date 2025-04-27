@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    default: dev
   cache:
     type: jcache
     jcache:
@@ -7,31 +9,30 @@ spring:
     default-property-inclusion: NON_NULL
   application:
     name: user-auth-n
-  datasource:
-    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=data01
-    username: user01
-    password: 123456
-    driver-class-name: org.postgresql.Driver
-    hikari:
-      leak-detection-threshold: 600000
-      minimum-idle: 1
-      idle-timeout: 1200000
-      connection-timeout: 600000
-      maximum-pool-size: 3
-      pool-name: user-hikari-cp
+  # datasource:
+  #   url: jdbc:postgresql://localhost:5432/postgres?currentSchema=data01
+  #   username: user01
+  #   password: 123456
+  #   driver-class-name: org.postgresql.Driver
+  #   hikari:
+  #     leak-detection-threshold: 600000
+  #     minimum-idle: 1
+  #     idle-timeout: 1200000
+  #     connection-timeout: 600000
+  #     maximum-pool-size: 3
+  #     pool-name: user-hikari-cp
 
-  jpa:
-    generate-ddl: false
-    show-sql: true
-    properties:
-      hibernate:
-        '[format_sql]': true
+  # jpa:
+  #   generate-ddl: false
+  #   show-sql: true
+  #   properties:
+  #     hibernate:
+  #       '[format_sql]': true
 
-  security:
-    # user and password when login form is enabled
-    user:
-      name: user
-      password: 1234
+  # security:
+  #   user:
+  #     name: user
+  #     password: 1234
 
 server:
   port: 8080
@@ -44,16 +45,16 @@ jwt:
   algorithm: HmacSHA256
   key-size: 2048
         
-logging:
-  level:
-    '[com.zaxxer.hikari]': DEBUG
-    org:
-      springframework:
-        security: DEBUG
-      hibernate:
-        sql: DEBUG
-        type:
-          descriptor:
-            sql: DEBUG
-  file:
-    name: logs/user_authn.log
+# logging:
+#   level:
+#     '[com.zaxxer.hikari]': DEBUG
+#     org:
+#       springframework:
+#         security: DEBUG
+#       hibernate:
+#         sql: DEBUG
+#         type:
+#           descriptor:
+#             sql: DEBUG
+#   file:
+#     name: logs/user_authn.log
