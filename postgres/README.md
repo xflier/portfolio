@@ -2,15 +2,7 @@
 
 The following steps are all under the project folder
 
-1. set up environment variables
-2. create .env file with the following contents
-UID=<uid>
-GID=<gid>
-POSTGRES_USER=user
-POSTGRES_PASSWORD=1234
-
-
-3. create a network docker_net
+1. create a network docker_net if it is not created yet
 
 docker network create docker_net
 
