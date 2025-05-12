@@ -1,5 +1,7 @@
 package home.xflier.authn.entity;
 
+import java.time.LocalDateTime;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 
 /**
  * RoleEntity.java
@@ -23,15 +26,30 @@ import jakarta.persistence.Table;
 @Table(name = "role_tb")
 public class RoleEntity {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-    @Column(name = "rolename", nullable = false, length = 255)
     private String rolename;
+    private LocalDateTime lastTimeStamp;
 
+    @Version
+    @Column(name = "last_timestamp", nullable = false, insertable = false, updatable = true)   
+    public LocalDateTime getLastTimeStamp() {
+        return lastTimeStamp == null ? LocalDateTime.now() : lastTimeStamp;
+    }
+
+    @Id
+    @Column(name = "id", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getId() {
         return id;
+    }
+
+    @Column(name = "rolename", nullable = false, length = 255)
+    public String getRolename() {
+        return rolename;
+    }
+
+    public void setLastTimeStamp(LocalDateTime lastTimeStamp) {
+        this.lastTimeStamp = lastTimeStamp;
     }
 
     public void setId(int id) {
@@ -40,9 +58,5 @@ public class RoleEntity {
 
     public void setRolename(String rolename) {
         this.rolename = rolename;
-    }
-
-    public String getRolename() {
-        return rolename;
     }
 }

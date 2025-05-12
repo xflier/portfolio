@@ -17,7 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import home.xflier.authn.dto.LoginDto;
+import home.xflier.authn.dto.in.LoginInDto;
 import home.xflier.authn.dto.in.UserInDto;
 import home.xflier.authn.dto.out.UserOutDto;
 import home.xflier.authn.dto.out.UserPrincipal;
@@ -84,7 +84,7 @@ public class UserService implements UserDetailsService {
         return getUserPrincipal(username);
     }
 
-    public boolean authenticate(LoginDto user, AuthenticationManager authManager) {
+    public boolean authenticate(LoginInDto user, AuthenticationManager authManager) {
 
         Authentication authentication = authManager
                 .authenticate(

@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  user_auth_n_service:
+    image: xflier/user-auth-n:1.0
+    container_name: user_auth_n_app
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+      - DB_URL=jdbc:postgresql://postgres:5432/postgres?currentSchema=data01
+      - DB_DRIVER=org.postgresql.Driver
+      - DB_USERNAME=user01
+      - DB_PASSWORD=123456
+    networks:
+      - docker_net
+
+networks:
+  docker_net:
+    external: true

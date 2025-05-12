@@ -1,6 +1,7 @@
 package home.xflier.authn.entity;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,6 +15,7 @@ import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 
 /**
  * @author xflier
@@ -27,42 +29,15 @@ import jakarta.persistence.Table;
 @NamedEntityGraph(name = "UserEntity.rolesAssigned", attributeNodes = @NamedAttributeNode("rolesAssigned") )
 public class UserEntity implements Serializable{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-    @Column(name = "username", unique = true, nullable = false, length = 255)
     private String username;
-
-
-    @Column(name = "passwd", nullable = false, length = 255)
     private String passwd;
-
-    @Column(name = "email", nullable = false, length = 255)
     private String email;
+    private LocalDateTime lastTimeStamp;
 
-    @OneToMany(mappedBy = "user", fetch = jakarta.persistence.FetchType.LAZY, cascade = {})
     private Set<RoleAssignmentEntity> rolesAssigned = new HashSet<>();
 
-    public Set<RoleAssignmentEntity> getRolesAssigned() {
-        return rolesAssigned;
-    }
-
-    public void setRolesAssigned(Set<RoleAssignmentEntity> rolesAssigned) {
-        this.rolesAssigned = rolesAssigned;
-    }
-
-    // public UserEntity() {
-    //     this.username = "None";
-    //     this.passwd = "None";
-    //     this.email = "none@none.com";
-    // }
-
     public UserEntity() {
-    }
-
-    public long getId() {
-        return id;
     }
 
     public UserEntity(long id, String username, String passwd, String email) {
@@ -72,32 +47,61 @@ public class UserEntity implements Serializable{
         this.email = email;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    @Id
+    @Column(name = "id", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public long getId() {
+        return id;
     }
 
+    @Column(name = "username", unique = true, nullable = false, length = 255)
     public String getUsername() {
         return username;
+    }
+
+    @Column(name = "passwd", nullable = false, length = 255)
+    public String getPasswd() {
+        return passwd;
+    }
+
+    @Column(name = "email", nullable = false, length = 255)
+    public String getEmail() {
+        return email;
+    }
+
+    @Version
+    @Column(name = "last_timestamp", nullable = false, insertable = false, updatable = true)   
+    public LocalDateTime getLastTimeStamp() {
+        return this.lastTimeStamp == null ? LocalDateTime.now() : this.lastTimeStamp;
+    }
+
+    @OneToMany(mappedBy = "user", fetch = jakarta.persistence.FetchType.LAZY, cascade = {})
+    public Set<RoleAssignmentEntity> getRolesAssigned() {
+        return rolesAssigned;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public void setUsername(String username) {
         this.username = username;
     }
 
-    public String getPasswd() {
-        return passwd;
+    public void setLastTimeStamp(LocalDateTime lastTimeStamp) {
+        this.lastTimeStamp = lastTimeStamp;
     }
 
     public void setPasswd(String passwd) {
         this.passwd = passwd;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setRolesAssigned(Set<RoleAssignmentEntity> rolesAssigned) {
+        this.rolesAssigned = rolesAssigned;
     }
 
 }

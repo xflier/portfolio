@@ -32,6 +32,7 @@ public interface UserMapper{
 
     @Mapping(source = "username", target = "username")
     @Mapping(target = "rolesAssigned", ignore = true)
+    @Mapping(target = "lastTimeStamp", ignore = true)
     public UserEntity toUserEntity(UserInDto user);
 
     // @Mapping(target = "username",source = "username", qualifiedByName = "hideDefaultUsername")
@@ -39,11 +40,16 @@ public interface UserMapper{
     public UserOutDto toUserDto(UserEntity user); 
 
     @Mapping(target = "authorities", expression = "java(loadAuthorities(user))")
+    @Mapping(target = "accessToken", ignore = true)
+    @Mapping(target = "refreshToken", ignore = true)
+    @Mapping(target = "accessTokenExpiration", ignore = true)
+    @Mapping(target = "refreshTokenExpiration", ignore = true)
     public UserPrincipal toUserPrincipal(UserEntity user); 
 
     public List<UserOutDto> toUserDtoList(List<UserEntity> users);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "lastTimeStamp", ignore = true)
     public RoleEntity toRoleEntity(RoleInDto role);
 
     public RoleOutDto toRoleDto(RoleEntity role);

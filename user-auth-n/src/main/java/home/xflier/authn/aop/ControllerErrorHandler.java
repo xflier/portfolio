@@ -55,10 +55,10 @@ public class ControllerErrorHandler {
 
         StackTraceElement[] stackTrace = ex.getStackTrace();
         StackTraceElement origin = stackTrace[0];
-        LOGGER.error(ex.getClass() +" - " + ex.getMessage() + " - originated in:");
-        LOGGER.error("Class: " + origin.getClassName());
-        LOGGER.error("Method: " + origin.getMethodName());
-        LOGGER.error("Line: " + origin.getLineNumber());
+        LOGGER.error(ex.getClass() +" - " + ex.getMessage() + " - originated in: " + "Class: " + origin.getClassName() +
+                " - Method: " + origin.getMethodName() + " - Line: " + origin.getLineNumber()
+                + " - Stack trace: " + ex.getStackTrace() + " - Cause: " + ex.getCause()
+        ) ;
 
         ErrorDto errorDto = new ErrorDto("" + httpStatus.value(), httpStatus.name(), ex.getMessage());
         response = new ResponseEntity<>(errorDto, httpStatus);

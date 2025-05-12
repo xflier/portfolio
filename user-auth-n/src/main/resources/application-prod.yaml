@@ -1,16 +1,16 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=data01
-    username: user01
-    password: 123456
-    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: ${DB_DRIVER}
     hikari:
       leak-detection-threshold: 600000
-      minimum-idle: 1
+      minimum-idle: ${CP_MIN_IDLE:1}
       idle-timeout: 1200000
       connection-timeout: 600000
-      maximum-pool-size: 3
-      pool-name: user-hikari-cp
+      maximum-pool-size: ${CP_MAX_SIZE:3}
+      pool-name: ${CP_NAME:user-hikari-cp}
   jpa:
     generate-ddl: false
     show-sql: true

@@ -13,6 +13,7 @@ import home.xflier.authn.entity.RoleAssignmentEntity;
 import home.xflier.authn.mapper.UserMapper;
 import home.xflier.authn.repo.RoleAssignmentRepo;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * RoleAssignmentService
@@ -24,6 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "Role Assignment Service", description = "Service for managing role assignments")
 @Service
+@Slf4j
 public class RoleAssignmentService {
 
     @Autowired
@@ -32,7 +34,7 @@ public class RoleAssignmentService {
     @Autowired
     private UserMapper userMapper;
 
-    @CacheEvict(value = "roleAssignment", key = "#entity.userId")
+    @CacheEvict(value = "roleAssignment", allEntries = true)
     public RoleAssignmentOutDto save(RoleAssignmentInDto roleAssignment) {
         RoleAssignmentEntity entity = userMapper.toRoleAssignmentEntity(roleAssignment);
         return userMapper.toRoleAssignmentDto(roleAssignmentRepo.save(entity));

@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 
 /**
  * RoleAssignmentEntity
@@ -24,63 +25,60 @@ import jakarta.persistence.Table;
 @Table(name = "user2role_tb")
 public class RoleAssignmentEntity {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private UserEntity user;
-
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
     private RoleEntity role;
+    private String assignedBy;
+    private LocalDateTime lastTimeStamp;
 
     @Column(name = "assigned_by", nullable = false, length = 255)
-    private String assignedBy;
-
     public String getAssignedBy() {
         return assignedBy;
     }
 
-    public void setAssignedBy(String assignedBy) {
-        this.assignedBy = assignedBy;
-    }
-
+    @Version
+    @Column(name = "last_timestamp", nullable = true, insertable = false, updatable = true)   
     public LocalDateTime getLastTimeStamp() {
-        return lastTimeStamp;
+        return lastTimeStamp == null ? LocalDateTime.now() : lastTimeStamp;
     }
 
-    public void setLastTimeStamp(LocalDateTime lastTimeStamp) {
-        this.lastTimeStamp = lastTimeStamp;
-    }
-
-    @Column(name = "last_timestamp", nullable = false, insertable = false, updatable = false)   
-    private LocalDateTime lastTimeStamp;
-
+    @Id
+    @Column(name = "id", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long getId() {
         return id;
+    }
+
+    @ManyToOne(cascade = {})
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    public UserEntity getUser() {
+        return user;
+    }
+
+    @ManyToOne(cascade = {})
+    @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
+    public RoleEntity getRole() {
+        return role;
     }
 
     public void setId(long id) {
         this.id = id;
     }
 
-    public UserEntity getUser() {
-        return user;
-    }
-
     public void setUser(UserEntity user) {
         this.user = user;
-    }
-
-    public RoleEntity getRole() {
-        return role;
     }
 
     public void setRole(RoleEntity role) {
         this.role = role;
     }
 
+    public void setAssignedBy(String assignedBy) {
+        this.assignedBy = assignedBy;
+    }
     
+    public void setLastTimeStamp(LocalDateTime lastTimeStamp) {
+        this.lastTimeStamp = lastTimeStamp;
+    }
+
 }

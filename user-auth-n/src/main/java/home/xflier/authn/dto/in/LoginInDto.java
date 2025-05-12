@@ -1,4 +1,4 @@
-package home.xflier.authn.dto;
+package home.xflier.authn.dto.in;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class LoginDto {
+public class LoginInDto {
 
     @Schema(description = "username must be at least 4 chars")
     @NotBlank(message = "Username can't be blank!")

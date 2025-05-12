@@ -13,6 +13,8 @@ import org.springframework.cache.annotation.EnableCaching;
  *  4. login with user/passwd authentication
  * 	5. REST APIs in xml or json formats (STATELESS)
  *  6. Disabled CSRF token
+ *  7. user database access is cached with EhCache
+ * 
  * 
  * @author xflier
  * @version 1.0

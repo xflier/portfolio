@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.PathVariable;
  */
 
 @RestController
-@RequestMapping("/role-assignments")
+@RequestMapping("/role-assignment")
 @Validated
 @Slf4j
 @Tag(name = "Role Assignment APIs", description = "Operations related to role assignments, such as add, query, etc.")
@@ -56,9 +56,10 @@ public class RoleAssignmentController {
     public ResponseEntity<RoleAssignmentOutDto> add(HttpServletRequest req,
             @Valid @RequestBody RoleAssignmentInDto roleAssignment) {
 
-        log.info("Processing request - /role-assignments/add - POST");
+        log.info("Processing request - /role-assignment - POST");
 
         RoleAssignmentOutDto roleAssignmentDto = roleAssignmentService.save(roleAssignment);
+        log.info("Processing request - /role-assignment - Done");
 
         return new ResponseEntity<>(roleAssignmentDto, HttpStatus.CREATED);
 
@@ -70,7 +71,7 @@ public class RoleAssignmentController {
      * @param id
      * @return
      */
-    @GetMapping("user/id/{userId}")
+    @GetMapping("/user/id/{userId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<RoleAssignmentOutDto>> findByUserId(@PathVariable(name = "userId", required = true) long id) {
 

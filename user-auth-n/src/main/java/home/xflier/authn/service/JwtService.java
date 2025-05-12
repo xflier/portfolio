@@ -22,6 +22,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import home.xflier.authn.dto.out.LoginOutDto;
 import home.xflier.authn.dto.out.UserPrincipal;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -49,6 +50,12 @@ public class JwtService {
 
     @Value("${jwt.key-size}")
     private String jwtKeySize;
+
+    @Value("${jwt.expiration.access-token}")
+    private long jwtAccessTokenExpiration;
+
+    @Value("${jwt.expiration.refresh-token}")
+    private long jwtRefreshTokenExpiration;
 
     private String secretKey;
     private KeyPair keyPair;
@@ -85,12 +92,19 @@ public class JwtService {
         }
     }
 
-    public String generateToken(String userName) {
+    public LoginOutDto generateToken(String userName ) {
+        String token = generateToken(userName, false);
+        return new LoginOutDto(token, null, "Bearer", jwtAccessTokenExpiration, jwtRefreshTokenExpiration);
+    }
+
+    public String generateToken(String userName, boolean refresh ) {
 
         // define the claim / payload
         Map<String, Object> claims = new HashMap<>();
 
         JwtBuilder builder = Jwts.builder();
+
+        long expiration = refresh ? jwtRefreshTokenExpiration : jwtAccessTokenExpiration;
 
         LOGGER.info("retrieving user principal ...");
 
@@ -108,10 +122,12 @@ public class JwtService {
 
         claims.put("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
 
+        String uname = refresh ? user.getUsername() : userName;
+
         builder.claims(claims)
-                .subject(userName)
+                .subject(uname)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 3 * 60 * 1000));
+                .expiration(new Date(System.currentTimeMillis() + expiration));
 
         if ("HmacSHA256".equals(jwtAlgorithm)) {
             builder.signWith(getKey());
@@ -121,10 +137,15 @@ public class JwtService {
             builder.signWith(keyPair.getPrivate());
         }
 
-        return builder.compact();
+        String token = builder.compact();
+        return token;
     }
 
     public UserPrincipal validateToken(String token) {
+        return validateToken(token, false);
+    }
+
+    public UserPrincipal validateToken(String token, boolean refresh) {
         String user = null;
         Claims claims = null;
         try {
@@ -134,12 +155,21 @@ public class JwtService {
             LOGGER.error("Token verification failed : " + e.getMessage());
         }
         
+        LOGGER.info("user = " + user);
         UserPrincipal userPrincipal = new UserPrincipal();
         userPrincipal.setUsername(user);
         Collection<? extends GrantedAuthority> authorities = ((List<?>)claims.get("roles")).stream()
                 .map(role -> new SimpleGrantedAuthority(role.toString()))
                 .collect(Collectors.toList())  ;
         userPrincipal.setAuthorities(authorities);
+
+        if (refresh) {
+            userPrincipal.setRefreshToken(token);
+            userPrincipal.setRefreshTokenExpiration(claims.getExpiration().getTime());
+        } else {
+            userPrincipal.setAccessToken(token);
+            userPrincipal.setAccessTokenExpiration(claims.getExpiration().getTime());
+        }
 
         LOGGER.info("UserPrincipal = " + userPrincipal.toString());
         return userPrincipal;
@@ -186,6 +216,14 @@ public class JwtService {
             return claims;
         } else
             return null;
+    }
+
+    public long getAccessTokenExpiration() {
+        return jwtAccessTokenExpiration;
+    }
+
+    public long getRefreshTokenExpiration() {
+        return jwtRefreshTokenExpiration;
     }
 
     // @Autowired

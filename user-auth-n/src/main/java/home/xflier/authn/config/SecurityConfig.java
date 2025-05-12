@@ -24,7 +24,7 @@ import home.xflier.authn.service.UserService;
  * Security Configuration
  * 
  * @author xflier
- * @version 1.0 
+ * @version 1.0
  * @since 2023-10-01
  */
 
@@ -42,7 +42,7 @@ public class SecurityConfig {
     }
 
     /**
-     * Security Filter Chain 
+     * Security Filter Chain
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -62,35 +62,36 @@ public class SecurityConfig {
 
         http.csrf(customizer -> customizer.disable())
 
-        // allow login without JWT or username/passwd authentication
-        .authorizeHttpRequests(auth -> auth.requestMatchers("/user/token").permitAll().anyRequest().authenticated())
-        // .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+                // allow login without JWT or username/passwd authentication
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/user/token", "/user/refresh-token")
+                        .permitAll().anyRequest().authenticated())
+                // .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
 
-        /* non lambda way to disable session, and make it stateless */
-        // Customizer<SessionManagementConfigurer<HttpSecurity>> sessionManagementCustomizer = new Customizer<>() {
+                /* non lambda way to disable session, and make it stateless */
+                // Customizer<SessionManagementConfigurer<HttpSecurity>>
+                // sessionManagementCustomizer = new Customizer<>() {
 
-        //     @Override
-        //     public void customize(SessionManagementConfigurer<HttpSecurity> t) {
-        //         t.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                // @Override
+                // public void customize(SessionManagementConfigurer<HttpSecurity> t) {
+                // t.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        //     }
+                // }
 
-        // };
+                // };
 
-        // http.sessionManagement(sessionManagementCustomizer);
+                // http.sessionManagement(sessionManagementCustomizer);
 
-        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        
-        .httpBasic(Customizer.withDefaults())
-        
-        // .securityContext(context -> context .requireExplicitSave(false))
-        // .requestCache(cache -> cache.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-        // .anonymous(anon -> anon.disable())
-        
+                .httpBasic(Customizer.withDefaults())
 
-        // JWT Filter and username password authentication
-        .addFilterBefore(jwtServletFilter, UsernamePasswordAuthenticationFilter.class);
+                // .securityContext(context -> context .requireExplicitSave(false))
+                // .requestCache(cache -> cache.disable())
+
+                // .anonymous(anon -> anon.disable())
+
+                // JWT Filter and username password authentication
+                .addFilterBefore(jwtServletFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -99,7 +100,8 @@ public class SecurityConfig {
 
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(this.userService);
-        // provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance()); // no password encoder
+        // provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance()); // no
+        // password encoder
         provider.setPasswordEncoder(bcryptEncoder);
 
         return provider;

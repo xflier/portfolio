@@ -24,11 +24,16 @@ public class UserPrincipal implements UserDetails{
     private String email;
     private Collection<? extends GrantedAuthority> authorities;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        // return Collections.singleton(new SimpleGrantedAuthority("USER"));
-        return authorities;
-    }
+    private String accessToken;
+    private String refreshToken;
+    private long accessTokenExpiration;
+    private long refreshTokenExpiration;
+
+    // @Override
+    // public Collection<? extends GrantedAuthority> getAuthorities() {
+    //     // return Collections.singleton(new SimpleGrantedAuthority("USER"));
+    //     return authorities;
+    // }
     
     @Override
     public String getPassword() {

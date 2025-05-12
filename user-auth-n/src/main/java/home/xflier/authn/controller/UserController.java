@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import home.xflier.authn.dto.LoginDto;
+import home.xflier.authn.dto.in.LoginInDto;
 import home.xflier.authn.dto.in.UserInDto;
+import home.xflier.authn.dto.out.LoginOutDto;
 import home.xflier.authn.dto.out.UserOutDto;
+import home.xflier.authn.dto.out.UserPrincipal;
 import home.xflier.authn.service.JwtService;
 import home.xflier.authn.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,6 +30,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -47,7 +52,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @Validated
-@RequestMapping(value = "/user/", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+@RequestMapping(value = "/user", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 @Tag(name = "User APIs", description = "Operations related to users")
 public class UserController {
 
@@ -64,6 +69,7 @@ public class UserController {
 
     /**
      * add a new user
+     * 
      * @param req
      * @param user
      * @return
@@ -73,7 +79,7 @@ public class UserController {
             MediaType.APPLICATION_XML_VALUE })
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserOutDto> add(HttpServletRequest req, @RequestBody @Valid UserInDto user) {
-        LOGGER.info("processing request - /user/add - POST");
+        LOGGER.info("processing request - /user - POST");
         UserOutDto userDto = userService.add(user);
         LOGGER.info("user is addedd  -  " + userDto.getUsername());
         return new ResponseEntity<>(userDto, HttpStatus.CREATED);
@@ -81,12 +87,13 @@ public class UserController {
 
     /**
      * Retrieve a user
+     * 
      * @param req
      * @param user
      * @return
      */
     @Operation(summary = "query a user by an id", description = "return the user details except password")
-    @GetMapping("id/{userId}")
+    @GetMapping("/id/{userId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<UserOutDto> getUserById(HttpServletRequest req, @PathVariable("userId") long id) {
         UserOutDto user = userService.findById(id);
@@ -95,6 +102,7 @@ public class UserController {
 
     /**
      * Search users with a partial value on username
+     * 
      * @param partialValue
      * @param req
      * @param offset
@@ -102,7 +110,7 @@ public class UserController {
      * @return
      */
     @Operation(summary = "search a user with a partial value on username", description = "Paginated Response")
-    @GetMapping("partial-username/{partialValue}")
+    @GetMapping("/partial-username/{partialValue}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<Page<UserOutDto>> partialSearch(HttpServletRequest req,
             @PathVariable(value = "partialValue", required = true) String p,
@@ -113,25 +121,51 @@ public class UserController {
 
     /**
      * Login with username and password and get a JWT token in the header
+     * 
      * @param req
      * @param user
      * @return
      */
     @Operation(summary = "login with username/password, and get a JWT token in the header", description = "User JWT Token for future requests")
-    @PostMapping("token")
-    public ResponseEntity<Void> login(HttpServletRequest req, HttpServletResponse res,
-            @RequestBody LoginDto user) {
+    @PostMapping("/token")
+    public ResponseEntity<LoginOutDto> login(HttpServletRequest req, HttpServletResponse res,
+            @RequestBody LoginInDto user) {
 
         boolean isAuthenticated = userService.authenticate(user, this.authManager);
 
         if (isAuthenticated) {
-            String token = jwtService.generateToken(user.getUsername());
-            res.addHeader("Authorization", "Bearer " + token);
+            LoginOutDto dto = jwtService.generateToken(user.getUsername());
+            res.addHeader("Authorization", "Bearer " + dto.getAccessToken());
 
-            LOGGER.info("JWT Token = " + token);
-            return new ResponseEntity<>(HttpStatus.OK);
+            dto.setRefreshToken(jwtService.generateToken(null, true));
+            dto.setAccessExpiresIn(jwtService.getAccessTokenExpiration());
+            dto.setRefreshExpiresIn(jwtService.getRefreshTokenExpiration());
+
+            LOGGER.info("Access JWT Token = " + dto.getAccessToken());
+            LOGGER.info("Refresh JWT Token = " + dto.getAccessToken());
+
+            return new ResponseEntity<>(dto, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    @Operation(summary = "refresh a JWT token", description = "User JWT Token for future requests")
+    @PostMapping("/refresh-token")
+    public ResponseEntity<LoginOutDto> refreshToken(HttpServletRequest req, HttpServletResponse res,
+            @RequestBody String refreshToken) {
+
+        UserPrincipal user = jwtService.validateToken(refreshToken, true);
+
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user,
+                null, user.getAuthorities());
+        // authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        LoginOutDto dto = jwtService.generateToken(user.getUsername());
+        dto.setRefreshToken(refreshToken);
+        dto.setRefreshExpiresIn(user.getRefreshTokenExpiration());
+
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 }
