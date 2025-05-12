@@ -31,6 +31,10 @@ This project is a user authentication system built to demonstrate secure login, 
     mvn package -DskipTests
     ```
 
+3. Optionally build a Docker image with the Dockerfile, and deploy it in a container 
+
+4. Optionally deploy it using docker-compose.yml from docker hub
+
 ## Usage
 
 - Access the application at `http://localhost:8080`.
