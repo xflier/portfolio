@@ -1,0 +1,14 @@
+#list topics
+kafka-topics.sh --bootstrap-server localhost:39092 --list 
+
+# create a topic
+kafka-topics.sh --bootstrap-server localhost:39092 --create --replication-factor 3 --partitions 3 --topic test-topic01 
+
+# describe a topic
+kafka-topics.sh --bootstrap-server localhost:39092 --describe --topic test-topic01
+
+# producer console
+kafka-console-producer.sh --topic test-topic01 --bootstrap-server localhost:29092
+
+# consumer console
+kafka-console-consumer.sh --topic test-topic01 --bootstrap-server localhost:29092

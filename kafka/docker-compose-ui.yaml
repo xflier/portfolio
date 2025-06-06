@@ -1,0 +1,16 @@
+services:
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui-container
+    ports:
+      - "58080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: "kafka-cluster"
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka-1:19092,kafka-2:19092,kafka-3:19092"
+      KAFKA_CLUSTERS_0_READONLY: "false"
+      DYNAMIC_CONFIGURATION_ENABLED: "true"
+    networks:
+      - docker_net
+networks:
+  docker_net:
+    external: true
